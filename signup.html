@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="left-side">
+        <div class="hero-content">
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="graduation-cap">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
+          </svg>
+          <h1 style="color: black;">ACADEMIX</h1>
+          <p>Join our virtual learning platform and experience education without boundaries.</p>
+          <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&q=80&w=500" alt="Education" class="hero-image">
+        </div>
+      </div>
+  <div class="signup-container">
+    <h2 style="color: black;">Sign Up</h2>
+    <form class="signup-form" id="signup-form">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter your username" required />
+      </div>
+
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter your email" required />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required />
+      </div>
+
+      <div class="input-group">
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" placeholder="Confirm your password" required />
+      </div>
+
+      <button type="submit" id="signup-btn" class="signup-btn">Sign Up</button>
+
+      <div class="additional-links">
+        <p>Already have an account? <a href="index.html">Login</a></p>
+      </div>
+    </form>
+
+    <div id="status"></div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyD6OBkNfYPC76Wrohzo3fPOr7aDtTune6E",
+      authDomain: "virtual-classroom-48f07.firebaseapp.com",
+      projectId: "virtual-classroom-48f07",
+      storageBucket: "virtual-classroom-48f07.appspot.com",
+      messagingSenderId: "1037610021930",
+      appId: "1:1037610021930:web:e755e76c282b2081aeff53",
+      measurementId: "G-0VX94FTHBJ"
+    };
+
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+ 
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const status = document.getElementById('status');
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+
+     
+      if (!username || !email || !password || !confirmPassword) {
+        status.innerHTML = `<div class="result error">Please fill in all fields.</div>`;
+        return;
+      }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            status.innerHTML = `<div class="result error">Please enter a valid email address.</div>`;
+            return;
+        }
+
+      if (password !== confirmPassword) {
+        status.innerHTML = `<div class="result error">Passwords do not match.</div>`;
+        return;
+      }
+
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        status.innerHTML = `<div class="result success">Registered Successfully!</div>`;
+        setTimeout(() => {
+    window.location.href = "index.html";
+  }, 2000);
+      } catch (error) {
+        status.innerHTML = `<div class="result error">Registration Failed: ${error.message}</div>`;
+      }
+    });
+  </script>
+</body>
+</html>
