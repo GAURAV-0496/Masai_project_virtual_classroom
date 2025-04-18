@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Classroom - Home</title>
+    <!-- <link rel="stylesheet" href="main.css"> -->
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="classroom-container">
+        <header class="classroom-header">
+            <h1>ACADEMIX</h1>
+            <div class="user-info">
+                <span id="username-display"></span>
+                <button id="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <!-- <nav class="classroom-nav">
+            <button class="nav-btn active" data-page="home">Home</button>
+            <button class="nav-btn" data-page="video">Video Conference</button>
+            <button class="nav-btn" data-page="whiteboard">Whiteboard</button>
+            <button class="nav-btn" data-page="documents">Documents & Chat</button>
+        </nav> -->
+
+        <main class="home-container">
+            <section class="welcome-section">
+                <h2>Welcome back, <span id="user-greeting"></span>!</h2>
+                <p id="date-display"></p>
+                <div class="quick-actions">
+                    <button class="quick-action-btn" id="join-class-btn">
+                        <i class="fas fa-video"></i>
+                        <span><a href="plan.html">Join Class</a></span>
+                    </button>
+                    <button class="quick-action-btn" id="schedule-class-btn">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Schedule Class</span>
+                    </button>
+                    <!-- <button class="quick-action-btn" id="view-materials-btn">
+                        <i class="fas fa-book"></i>
+                        <span>View Materials</span>
+                    </button> -->
+                </div>
+            </section>
+
+            <section class="calendar-section">
+                <div class="calendar-header">
+                    <h3>Class Calendar</h3>
+                    <div class="month-navigation">
+                        <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                        <h4 id="current-month">April 2023</h4>
+                        <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="calendar">
+                    <div class="calendar-weekdays">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+                    <div class="calendar-days" id="calendar-days">
+                        <!-- Calendar days will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="upcoming-classes">
+                <div class="section-header">
+                    <h3>Upcoming Classes</h3>
+                    <button id="view-all-upcoming">View All</button>
+                </div>
+                <div class="classes-list" id="upcoming-classes-list">
+                    <!-- Upcoming classes will be populated by JavaScript -->
+                    <div class="loading">Loading upcoming classes...</div>
+                </div>
+            </section>
+
+            <section class="completed-classes">
+                <!-- <div class="section-header"> 
+                    <h3>Completed Classes</h3> 
+                     <button id="view-all-completed">View All</button> 
+                 </div>  -->
+                <div class="classes-list" id="completed-classes-list">
+                    
+                    <div class="loading">Loading completed classes...</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Class Details Modal -->
+    <div class="modal" id="class-details-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 id="modal-class-title">Class Title</h3>
+            <div class="modal-class-info">
+                <p><i class="fas fa-calendar-alt"></i> <span id="modal-class-date"></span></p>
+                <p><i class="fas fa-clock"></i> <span id="modal-class-time"></span></p>
+                <p><i class="fas fa-user"></i> <span id="modal-class-instructor"></span></p>
+                <p><i class="fas fa-link"></i> <a href="#" id="modal-class-link" target="_blank">Join Class</a></p>
+            </div>
+            <div class="modal-class-description">
+                <h4>Description</h4>
+                <p id="modal-class-description"></p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" id="join-class-modal-btn">Join Class</button>
+                <button class="btn-secondary" id="view-materials-modal-btn">View Materials</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Class Modal -->
+    <div id="schedule-class-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Schedule New Class</h2>
+            <form id="schedule-class-form">
+                <div class="form-group">
+                    <label for="class-title">Class Title*</label>
+                    <input type="text" id="class-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="class-date">Date*</label>
+                    <input type="date" id="class-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="class-time">Time*</label>
+                    <input type="time" id="class-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="class-duration">Duration (minutes)</label>
+                    <input type="number" id="class-duration" value="60" min="15" step="15">
+                </div>
+                <div class="form-group">
+                    <label for="class-description">Description</label>
+                    <textarea id="class-description"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Schedule Class</button>
+                    <button type="button" id="cancel-schedule" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- <script src="scripts/auth.js"></script> -->
+    <script src="dashboard.js" type="module"></script>
+</body>
+</html>
